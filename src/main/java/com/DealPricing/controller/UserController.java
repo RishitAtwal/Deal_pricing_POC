@@ -1,7 +1,7 @@
 package com.DealPricing.controller;
 
 import com.DealPricing.entities.User;
-import com.DealPricing.service.UserService;
+import com.DealPricing.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userService;
 
     @GetMapping
     public List<User> findAllUsers() {
@@ -22,7 +22,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> findUserById(@PathVariable("id") int id) {
+    public User findUserById(@PathVariable("id") int id)
+    {
         return userService.findById(id);
     }
 
@@ -31,9 +32,9 @@ public class UserController {
         return userService.saveUser(user);
     }
 
-    @PutMapping
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
+    @PutMapping("{id}")
+    public User updateUser(@PathVariable int id, @RequestBody User user) {
+        return userService.updateUser(id, user);
     }
 
     @DeleteMapping("/{id}")

@@ -12,33 +12,29 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService
+public class UserServiceImpl
 {
 
 @Autowired
 UserRepository userRepository;
-        @Override
+
         public List<User> findAllUsers() {
             return userRepository.findAll();
         }
-
-        @Override
-        public Optional<User> findById (int id){
-            return userRepository.findById(id);
+        public User findById (int id){
+            return userRepository.findById(id).orElse(null);
         }
-
-        @Override
         public User saveUser (User user){
             return userRepository.save(user);
         }
-
-        @Override
-        public User updateUser (User user){
-            return userRepository.save(user);
+        public User updateUser (int id, User user){
+            if(userRepository.findById(id).isPresent()) {
+                user.setEmployeeCode(id);
+                return userRepository.save(user);
+            }
+            return null;
         }
-
-    @Override
-    public User updateUserByFields(int id, Map<String, Object> fields) {
+        public User updateUserByFields(int id, Map<String, Object> fields) {
         Optional<User> existingUser = userRepository.findById(id);
         if (existingUser.isPresent()) {
             fields.forEach((key, value) -> {
@@ -50,10 +46,12 @@ UserRepository userRepository;
         }
         return null;
     }
-
-
-    @Override
-        public void deleteUser (int id){
-            userRepository.deleteById(id);
+    public String deleteUser (int id){
+            Optional<User> toDelete= userRepository.findById(id);
+            if(toDelete.isPresent()) {
+                userRepository.deleteById(id);
+                return "Deleted record:- "+ toDelete.toString();
+            }
+            return "Record Not Found";
         }
-    }
+}
